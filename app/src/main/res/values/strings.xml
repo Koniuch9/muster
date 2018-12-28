@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">Muster for Party</string>
+
+    <!--
+        Faccebook
+    -->
+    <string name="facebook_app_id">325037874764639</string>
+    <string name="fb_login_protocol_scheme">fb325037874764639</string>
+
+    <!--
+        Login Activity
+    -->
+    <string name="button_map">Pokaż Mapę</string>
+    <string name="login_email">E-mail</string>
+    <string name="login_password">Hasło</string>
+    <string name="login_create_button">Utwórz konto</string>
+    <string name="login_signin_button">Zaloguj</string>
+    <string name="fb_login">Zaloguj FB</string>
+    <!--
+        Track Activity
+    -->
+    <string name="title_activity_track">Mapa</string>
+    <string name="add_group">Dodaj grupę</string>
+    <string name="add_place">Dodaj miejsce</string>
+    <string name="show_group">Grupy</string>
+    <string name="switch_group">Zmień grupę</string>
+    <!--
+        Add Group Activity
+    -->
+    <string name="add_group_name">Nazwa grupy</string>
+    <string name="add_group_placeholder">Wpisz nazwę</string>
+    <string name="add_group_type">Rodzaj grupy</string>
+    <string name="group_type_dynamic">Dynamiczna</string>
+    <string name="group_type_admin">Jednostronna</string>
+    <string name="group_type_net">Sieć</string>
+    <string name="add_group_invite">Zaproś znajomych</string>
+    <!--
+        Add Place Activity
+    -->
+    <string name="add_place_name">Nazwa miejsca</string>
+    <string name="add_place_placeholder">Wpisz nazwę</string>
+    <string name="add_place_current_location">Obecna lokalizacja</string>
+
+    <!--
+        Group Activity
+    -->
+    <string name="exit_content">Opuść grupę</string>
+    <string name="addUser_content">Dodaj użytkownika</string>
+    <string name="addPlace_content">Dodaj miejsce</string>
+    <string name="group_users">Użytkownicy</string>
+    <string name="group_places">Miejsca</string>
+
+    <!--
+        Users Invite List Item
+    -->
+    <string name="user_image_content">Zdjęcie użytkownika</string>
+
+    <!--
+        Groups List Item
+    -->
+    <string name="groups_image_content">Logo grupy</string>
+    <string name="groups_admin_content">Jesteś administratorem tej grupy</string>
+
+    <!--
+        Grops List Item
+    -->
+    <string name="groups_cancel">Wróć</string>
+</resources>

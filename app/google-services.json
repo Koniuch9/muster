@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "174906833413",
+    "firebase_url": "https://genial-shuttle-226615.firebaseio.com",
+    "project_id": "genial-shuttle-226615",
+    "storage_bucket": "genial-shuttle-226615.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174906833413:android:087b55e189a97b13",
+        "android_client_info": {
+          "package_name": "com.example.olekc.musterforparty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "174906833413-1kpu3od1r3k66e21dh1en7ia3p3nk0o4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.olekc.musterforparty",
+            "certificate_hash": "ac9697432ff3fd930b4bc0f56755ab447f802050"
+          }
+        },
+        {
+          "client_id": "174906833413-t3ge3eohmi0ebjtd55rsr0asgq13e85q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmm2Pu1Q1ZeQ2qcLjWsvTXY0WQirsCkAU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174906833413-t3ge3eohmi0ebjtd55rsr0asgq13e85q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

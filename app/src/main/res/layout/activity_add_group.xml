@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddGroupActivity">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_group_name"
+        android:textSize="16sp"
+        android:labelFor="@id/groupName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/groupName"
+        android:text="@string/add_group_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@id/textView2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/add_group_type"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/groupName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"/>
+
+    <Spinner
+        android:id="@+id/groupType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/groupTypes"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView3" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_group_invite"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/groupType"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"/>
+
+    <ListView
+        android:id="@+id/usersInvite"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView4"
+        app:layout_constraintBottom_toTopOf="@id/confirm"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp">
+    </ListView>
+
+    <ImageButton
+        android:id="@+id/confirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_percent="0.5"
+        app:srcCompat="@drawable/ic_check_icon"
+        android:onClick="Confirm"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/usersInvite"
+         />
+
+    <ImageButton
+        android:id="@+id/cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_cancel_icon"
+        android:onClick="Cancel"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/usersInvite"
+        android:layout_marginStart="2dp"
+        />
+
+
+</android.support.constraint.ConstraintLayout>
