@@ -42,14 +42,16 @@ public class LoginActivity extends AppCompatActivity {
     private EditText email;
     private EditText password;
 
-    @Override
+
+    @Override @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference("users");
+        dbRef = database.getReference();
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
@@ -98,7 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                             //Log.d(TAG, "signInWithCredential:success");
                             Toast.makeText(LoginActivity.this, "Pomyślnie zalogowano firebase", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
-                            dbRef.setValue(user.getEmail());
+                            User usr = new User(user.getDisplayName());
+                            dbRef.child("users").child(user.getUid()).setValue(usr);
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -119,6 +122,9 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    /*
+    ----------------- E M A I L -----------------
+     */
     public void createAccount(View view)
     {
         if(!email.getText().toString().equals("") && !password.getText().toString().equals(""))
@@ -171,6 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
     }
+    // EMAIL
 
     @Override
     protected void onStart() {
@@ -190,6 +197,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void logInFb(View view) {
         FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email", "user_friends"));
     }
 }

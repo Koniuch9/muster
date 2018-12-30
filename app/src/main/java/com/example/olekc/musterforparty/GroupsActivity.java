@@ -22,13 +22,13 @@ public class GroupsActivity extends AppCompatActivity {
         groupList = findViewById(R.id.groupsList);
         groups = new ArrayList<>();
 
-        groups.add(new Group("Fajna"));
-        groups.add(new Group("Party Hard"));
-        groups.add(new Group("Party Rock"));
-        groups.add(new Group("Rodzinka"));
-        groups.add(new Group("Imprezy"));
-        groups.add(new Group("Chlanie"));
-        groups.add(new Group("Zabawa"));
+        groups.add(new Group("Fajna",1,true));
+        groups.add(new Group("Party Hard",1,true));
+        groups.add(new Group("Party Rock",1,true));
+        groups.add(new Group("Rodzinka",1,true));
+        groups.add(new Group("Imprezy",1,true));
+        groups.add(new Group("Chlanie",1,true));
+        groups.add(new Group("Zabawa",1,true));
 
         GroupsAdapter adapter = new GroupsAdapter(this,R.layout.groups,groups);
         groupList.setAdapter(adapter);

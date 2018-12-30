@@ -21,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class TrackActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener,
@@ -29,6 +30,7 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     private FirebaseAuth mAuth;
+    private FirebaseUser user;
     private GoogleMap mMap;
 
     @Override
@@ -40,6 +42,7 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
             requestPermission();
         }
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -54,6 +57,8 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
         inflater.inflate(R.menu.map_menu,menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

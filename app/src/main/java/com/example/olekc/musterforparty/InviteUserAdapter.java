@@ -37,7 +37,7 @@ public class InviteUserAdapter extends ArrayAdapter<User> {
         ImageView img = view.findViewById(R.id.userPhoto);
         TextView userName = view.findViewById(R.id.userName);
         final CheckBox selected = view.findViewById(R.id.checkBox);
-        userName.setText(user.getName());
+        userName.setText(user.name);
         selected.setChecked(user.isSelected());
 
         selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
