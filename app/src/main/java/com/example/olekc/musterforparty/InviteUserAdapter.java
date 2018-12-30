@@ -12,6 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class InviteUserAdapter extends ArrayAdapter<User> {
@@ -34,7 +36,10 @@ public class InviteUserAdapter extends ArrayAdapter<User> {
         LayoutInflater lI = LayoutInflater.from(context);
         View view = lI.inflate(layout,null,false);
         final User user = userList.get(position);
+
         ImageView img = view.findViewById(R.id.userPhoto);
+        if(user.photoUrl != null && !user.photoUrl.equals(""))Picasso.get().load(user.photoUrl).into(img);
+        //GlideApp.with(this).load("").into(img);
         TextView userName = view.findViewById(R.id.userName);
         final CheckBox selected = view.findViewById(R.id.checkBox);
         userName.setText(user.name);

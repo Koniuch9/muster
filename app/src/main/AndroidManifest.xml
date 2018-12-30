@@ -35,7 +35,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,11 +58,16 @@
         <activity
             android:name=".TrackActivity"
             android:label="@string/title_activity_track" />
-        <activity android:name=".AddGroupActivity" />
-        <activity android:name=".GroupActivity" />
-        <activity android:name=".AddPlaceActivity" />
-        <activity android:name=".PlaceDetailsActivity" />
-        <activity android:name=".GroupsActivity"></activity>
+        <activity android:name=".AddGroupActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".GroupActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AddPlaceActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".PlaceDetailsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".GroupsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

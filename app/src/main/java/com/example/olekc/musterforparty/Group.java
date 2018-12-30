@@ -12,6 +12,10 @@ public class Group {
     public Map<String, Boolean> members = new HashMap<>();
     public int type;
     public boolean visible;
+    @Exclude
+    public boolean member;
+    @Exclude
+    public String key;
 
     public Group(){}
     public Group(String name, int type, boolean visible)

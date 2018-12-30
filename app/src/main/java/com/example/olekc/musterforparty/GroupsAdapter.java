@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
 
     List<Group> groupList;
     Context context;
+    ImageView adminIcon;
     int layout;
 
     public GroupsAdapter(Context context, int layout, List<Group> groupList)
@@ -31,7 +33,8 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         LayoutInflater lI = LayoutInflater.from(context);
         View view = lI.inflate(layout,null,false);
         final Group group = groupList.get(position);
-
+        adminIcon = view.findViewById(R.id.adminIcon);
+        if(!group.member)adminIcon.setVisibility(View.INVISIBLE);
         TextView groupName = view.findViewById(R.id.groupName);
         groupName.setText(group.name);
 

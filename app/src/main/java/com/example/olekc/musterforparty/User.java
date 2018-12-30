@@ -9,7 +9,10 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class User {
 
+    @Exclude
+    public String uid;
     public String name;
+    public String photoUrl;
     @Exclude
     private boolean isSelected;
     public Map<String,Boolean> groups = new HashMap<>();
@@ -17,10 +20,17 @@ public class User {
 
     public User(){}
 
-    public User(String name)
+    public User(String name, String photoUrl)
     {
         this.name = name;
+        this.photoUrl = photoUrl;
         this.isSelected = false;
+    }
+
+    @Exclude
+    public void setUid(String uid)
+    {
+        this.uid = uid;
     }
 
     @Exclude
