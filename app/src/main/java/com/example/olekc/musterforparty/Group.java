@@ -9,6 +9,7 @@ import java.util.Map;
 public class Group {
 
     public String name;
+    public String admin;
     public Map<String, Boolean> members = new HashMap<>();
     public int type;
     public boolean visible;
@@ -18,8 +19,9 @@ public class Group {
     public String key;
 
     public Group(){}
-    public Group(String name, int type, boolean visible)
+    public Group(String admin, String name, int type, boolean visible)
     {
+        this.admin = admin;
         this.name = name;
         this.type = type;
         this.visible = visible;
@@ -30,6 +32,7 @@ public class Group {
     {
         Map<String,Object> map = new HashMap<>();
         map.put("name",name);
+        map.put("admin",admin);
         map.put("members",members);
         map.put("type",type);
         map.put("visible",visible);

@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -142,6 +143,7 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
                         }
                     }
                 });
+               // mMap.addMarker(new MarkerOptions().position(new LatLng(51,17)).title("To ja siema").icon(Picasso.get().load(user.getPhotoUrl()).));
             }
 
         }

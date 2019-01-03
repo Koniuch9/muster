@@ -49,7 +49,18 @@
     <string name="addPlace_content">Dodaj miejsce</string>
     <string name="group_users">Użytkownicy</string>
     <string name="group_places">Miejsca</string>
-
+    <string name="exit_group_alert">Na pewno chcesz opuścić grupę?</string>
+    <string name="exit_group_warning">Nie będziesz już miał dostępu.</string>
+    <string name="exit_group_confirm">Opuść</string>
+    <string name="exit_group_cancel">Zaniechaj</string>
+    <!--
+        Edit Group Activity
+    -->
+    <string name="delete_group_button">Usuń grupę</string>
+    <string name="delete_group_confirm">Usuń</string>
+    <string name="delete_group_cancel">Zaniechaj</string>
+    <string name="delete_group_alert">Na pewno chcesz usunąć grupę?</string>
+    <string name="delete_group_warning">Wszystkie dane zostaną trwale usunięte.</string>
     <!--
         Users Invite List Item
     -->

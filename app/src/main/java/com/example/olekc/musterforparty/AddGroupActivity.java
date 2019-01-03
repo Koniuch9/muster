@@ -96,7 +96,7 @@ public class AddGroupActivity extends AppCompatActivity {
             FirebaseUser user = mAuth.getCurrentUser();
             if(user != null) {
                 String key = dbRef.child("groups").push().getKey();
-                Group gr = new Group(name.getText().toString(), 1, true);
+                Group gr = new Group(user.getUid(),name.getText().toString(), 1, true);
 
                 gr.members.put(user.getUid(), true);
                 for(User u : userList)

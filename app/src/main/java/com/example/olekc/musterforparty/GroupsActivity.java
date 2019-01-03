@@ -100,6 +100,11 @@ public class GroupsActivity extends AppCompatActivity {
 
     }
 
+    public ListView getGroupList()
+    {
+        return groupList;
+    }
+
     public void Back(View view) {
         Intent i = new Intent(GroupsActivity.this,TrackActivity.class);
         startActivity(i);
