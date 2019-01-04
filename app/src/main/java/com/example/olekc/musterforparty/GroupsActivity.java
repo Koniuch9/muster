@@ -55,7 +55,6 @@ public class GroupsActivity extends AppCompatActivity {
                 for(DataSnapshot ds : dataSnapshot.getChildren())
                 {
                     userGroups.put(ds.getKey(),(Boolean)ds.getValue());
-                    Log.v("grupyusera",ds.getKey());
                 }
             }
 
@@ -69,7 +68,6 @@ public class GroupsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren())
                 {
-                    Log.v("grupy",ds.getKey());
                     if(userGroups.containsKey(ds.getKey()))
                     {
                         Group g = ds.getValue(Group.class);

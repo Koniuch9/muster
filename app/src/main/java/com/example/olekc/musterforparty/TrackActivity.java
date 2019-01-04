@@ -1,7 +1,10 @@
 package com.example.olekc.musterforparty;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,10 +13,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -25,19 +31,26 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TrackActivity extends AppCompatActivity implements OnMapReadyCallback,
@@ -52,6 +65,13 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
     private FirebaseUser user;
     private FusedLocationProviderClient mFusedLocationClient;
     private GoogleMap mMap;
+    private List<Group> userGroups;
+    private List<User> currentUsers;
+    private List<Marker> currentUsersMarkers;
+    private Group currentGroup;
+    private String currentGroupKey;
+    private SharedPreferences sP;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +81,19 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
         {
             requestPermission();
         }
+        sP = TrackActivity.this.getPreferences(Context.MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference();
+        currentUsersMarkers = new ArrayList<>();
+        currentUsers = new ArrayList<>();
+        setCurrentUsers();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        userGroups = new ArrayList<>();
+        setUserGroups();
     }
 
     /*
@@ -99,6 +125,8 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
                 i = new Intent(TrackActivity.this,GroupsActivity.class);
                 startActivity(i);
                 return true;
+            case R.id.switch_group:
+                showSwitchGroupDialog();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -116,10 +144,9 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
         mMap = googleMap;
         moveMapOnMe();
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
+
     }
 
     private void moveMapOnMe()
@@ -136,10 +163,12 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
                     public void onSuccess(Location location) {
                         if(location != null)
                         {
+                            Double lat,lng;
                             Map<String, Double> loc = new HashMap<>();
-                            loc.put("lat",location.getLatitude());
-                            loc.put("lon",location.getLongitude());
+                            loc.put("lat",lat=location.getLatitude());
+                            loc.put("lon",lng=location.getLongitude());
                             dbRef.child("users").child(user.getUid()).child("location").setValue(loc);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)));
                         }
                     }
                 });
@@ -148,9 +177,164 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
 
         }
     }
-    /*
+
+    public void showCurrentUsers()
+    {
+        if(!currentUsersMarkers.isEmpty())
+        {
+            for(Marker m : currentUsersMarkers)
+            {
+                m.remove();
+            }
+            currentUsersMarkers.clear();
+        }
+        if(!currentUsers.isEmpty() && mMap != null)
+        {
+            double avgLat=0, avgLng=0;
+            float zoom = 9;
+            int i=0;
+            for(User u : currentUsers)
+            {
+                double lat = u.location.get("lat"),lng = u.location.get("lon");
+                LatLng pos = new LatLng(lat,lng);
+                avgLat += lat;
+                avgLng += lng;
+                Marker m;
+                if(u.photoUrl != null && !u.photoUrl.equals(""))
+                {
+                    m = mMap.addMarker(new MarkerOptions().position(pos).title(u.name));
+                    Target marker = new PicassoMarker(m);
+                    Picasso.get().load(u.photoUrl).into(marker);
+                } else{
+                    m = mMap.addMarker(new MarkerOptions().position(pos).title(u.name));
+                      }
+                currentUsersMarkers.add(m);
+                i++;
+            }
+            if(i!=0) {
+                avgLat /= i;
+                avgLng /= i;
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(avgLat, avgLng), zoom));
+            }
+        }
+    }
+     /*
    END ------------- M A P A -------------
     */
+
+      /*
+    ------------- L O G I K A -------------
+    */
+
+    public void setCurrentUsers()
+    {
+        if(!currentUsers.isEmpty())
+            currentUsers.clear();
+            if(!(currentGroupKey=sP.getString(user.getUid()+"Group","")).equals(""))
+            {
+                final Map<String,Boolean> members = new HashMap<>();
+                dbRef.child("groups").child(currentGroupKey).child("members").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot ds : dataSnapshot.getChildren())
+                            {
+                                if((Boolean)ds.getValue())
+                                {
+                                    if(!ds.getKey().equals(user.getUid()))
+                                        members.put(ds.getKey(),(Boolean)ds.getValue());
+                                }
+                            }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                dbRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds : dataSnapshot.getChildren())
+                        {
+                            if(members.containsKey(ds.getKey()))
+                            {
+                                currentUsers.add(ds.getValue(User.class));
+                            }
+                        }
+                        showCurrentUsers();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+    }
+
+    public void setUserGroups()
+    {
+        final Map<String, Boolean> usrGroups = new HashMap<>();
+        dbRef.child("users").child(user.getUid()).child("groups").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren())
+                {
+                    if((Boolean)ds.getValue())
+                    usrGroups.put(ds.getKey(),(Boolean)ds.getValue());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        dbRef.child("groups").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren())
+                {
+                    if(usrGroups.containsKey(ds.getKey()))
+                    {
+                        Group g = ds.getValue(Group.class);
+                        g.member = usrGroups.get(ds.getKey());
+                        g.key = ds.getKey();
+                        userGroups.add(g);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void showSwitchGroupDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(TrackActivity.this);
+        builder.setTitle("Wybierz grupę");
+        builder.setAdapter(new GroupsAdapter(TrackActivity.this, R.layout.groups, userGroups), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                SharedPreferences.Editor editor = sP.edit();
+                editor.putString(user.getUid()+"Group",userGroups.get(i).key);
+                editor.commit();
+                setCurrentUsers();
+                dialogInterface.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    /*
+   END ------------- L O G I K A -------------
+    */
+
 
     /*
     ------------- P O Z W O L E N I A -------------

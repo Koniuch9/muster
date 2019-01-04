@@ -50,7 +50,7 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         adminIcon = view.findViewById(R.id.adminIcon);
         acceptIcon = view.findViewById(R.id.acceptIcon);
         refuseIcon = view.findViewById(R.id.refuseIcon);
-        if(!user.getUid().equals(group.admin))adminIcon.setVisibility(View.INVISIBLE);
+        if(!user.getUid().equals(group.admin))adminIcon.setVisibility(View.GONE);
         if(group.member)
         {
             acceptIcon.setVisibility(View.GONE);
