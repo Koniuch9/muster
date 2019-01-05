@@ -19,6 +19,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class GroupActivity extends AppCompatActivity {
 
     FirebaseUser user;
@@ -26,8 +31,9 @@ public class GroupActivity extends AppCompatActivity {
     FirebaseDatabase db;
     DatabaseReference dbRef;
     TextView groupName;
-    ListView memners;
+    ListView members;
     ImageView exitEdit;
+    List<User> userList;
     boolean adminView;
     String key;
     Bundle extras;
@@ -37,6 +43,7 @@ public class GroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
+        userList = new ArrayList<>();
         extras = getIntent().getExtras();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -44,8 +51,10 @@ public class GroupActivity extends AppCompatActivity {
         dbRef = db.getReference();
         groupName = findViewById(R.id.groupName);
         exitEdit = findViewById(R.id.exit_editGroup);
+        members = findViewById(R.id.group_user_list);
         if((key = extras.getString("groupId")) != null)
         {
+
             dbRef.child("groups").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -57,6 +66,7 @@ public class GroupActivity extends AppCompatActivity {
                         adminView = true;
                     }
                     else adminView = false;
+
                 }
 
                 @Override
@@ -64,6 +74,29 @@ public class GroupActivity extends AppCompatActivity {
 
                 }
             });
+
+            dbRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if(g.members.containsKey(ds.getKey()))
+                        {
+                            User u = ds.getValue(User.class);
+                            userList.add(u);
+                        }
+                    }
+
+                    AdminUsersAdapter adapter = new AdminUsersAdapter(GroupActivity.this,R.layout.users_admin, userList);
+                    members.setAdapter(adapter);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
         }
     }
 

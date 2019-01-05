@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="80dp">
+
+
+    <ImageView
+        android:id="@+id/userIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_user_icon"
+        android:scaleY="1.7"
+        android:scaleX="1.7"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="12dp"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/userIcon"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"/>
+
+    <ImageView
+        android:id="@+id/inviteState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_invite_ok_icon"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/userIcon"
+        android:layout_marginLeft="24dp"
+
+        android:scaleX="1.2"
+        android:scaleY="1.2"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintLeft_toRightOf="@id/switchInvite"
+        android:layout_marginLeft="12dp"/>
+
+    <Switch
+        android:id="@+id/switchInvite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintLeft_toRightOf="@id/inviteState"
+        android:layout_marginLeft="8dp"/>
+
+    <ImageView
+        android:id="@+id/removeUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_remove_user_icon"
+        android:scaleY="2"
+        android:scaleX="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="16dp"/>
+
+    <ImageView
+        android:id="@+id/locationState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_place_icon"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        app:layout_constraintLeft_toRightOf="@id/divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        android:layout_marginLeft="12dp"/>
+
+    <Switch
+        android:id="@+id/switchLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintLeft_toRightOf="@id/locationState"
+        android:layout_marginLeft="8dp"/>
+
+
+</android.support.constraint.ConstraintLayout>

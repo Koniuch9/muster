@@ -31,6 +31,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -190,15 +191,17 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
         }
         if(!currentUsers.isEmpty() && mMap != null)
         {
-            double avgLat=0, avgLng=0;
-            float zoom = 9;
+            final LatLngBounds.Builder builder = new LatLngBounds.Builder();
+           // double avgLat=0, avgLng=0;
+           // float zoom = 9;
             int i=0;
             for(User u : currentUsers)
             {
                 double lat = u.location.get("lat"),lng = u.location.get("lon");
                 LatLng pos = new LatLng(lat,lng);
-                avgLat += lat;
-                avgLng += lng;
+                builder.include(pos);
+               // avgLat += lat;
+               // avgLng += lng;
                 Marker m;
                 if(u.photoUrl != null && !u.photoUrl.equals(""))
                 {
@@ -211,11 +214,23 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
                 currentUsersMarkers.add(m);
                 i++;
             }
-            if(i!=0) {
-                avgLat /= i;
-                avgLng /= i;
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(avgLat, avgLng), zoom));
-            }
+            if(checkPermission())
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if(location != null)
+                    {
+                        Double lat = location.getLatitude(),lng = location.getLongitude();
+                        builder.include(new LatLng(lat,lng));
+                        LatLngBounds bounds = builder.build();
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,40),3000,null);
+                    }
+                }
+            });
+                /*avgLat /= i;
+                avgLng /= i;*/
+
+
         }
     }
      /*
