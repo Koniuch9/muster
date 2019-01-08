@@ -76,7 +76,7 @@ public class GroupsActivity extends AppCompatActivity {
                         groups.add(g);
                     }
                 }
-                GroupsAdapter adapter = new GroupsAdapter(GroupsActivity.this,R.layout.groups,groups);
+                GroupsAdapter adapter = new GroupsAdapter(GroupsActivity.this,R.layout.groups,groups,null);
                 groupList.setAdapter(adapter);
                 groupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -104,8 +104,8 @@ public class GroupsActivity extends AppCompatActivity {
     }
 
     public void Back(View view) {
-        Intent i = new Intent(GroupsActivity.this,TrackActivity.class);
-        startActivity(i);
+        /*Intent i = new Intent(GroupsActivity.this,TrackActivity.class);
+        startActivity(i);*/
         finish();
     }
 }

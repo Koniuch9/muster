@@ -76,7 +76,10 @@
         <activity
             android:name=".GroupsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".EditGroupActivity"></activity>
+        <activity android:name=".EditGroupActivity" />
+        <activity
+            android:name=".ChoosePlaceLocationActivity"
+            android:label="@string/title_activity_choose_place_location"></activity>
     </application>
 
 </manifest>

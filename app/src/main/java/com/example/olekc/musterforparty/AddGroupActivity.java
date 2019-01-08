@@ -44,7 +44,7 @@ public class AddGroupActivity extends AppCompatActivity {
         userList = new ArrayList<>();
         usersInvite = findViewById(R.id.usersInvite);
         database = FirebaseDatabase.getInstance();
-        type = findViewById(R.id.groupType);
+       // type = findViewById(R.id.groupType);
         name = findViewById(R.id.groupName);
         dbRef = database.getReference();
 
@@ -96,7 +96,7 @@ public class AddGroupActivity extends AppCompatActivity {
             FirebaseUser user = mAuth.getCurrentUser();
             if(user != null) {
                 String key = dbRef.child("groups").push().getKey();
-                Group gr = new Group(user.getUid(),name.getText().toString(), 1, true);
+                Group gr = new Group(user.getUid(),name.getText().toString());
 
                 gr.members.put(user.getUid(), true);
                 for(User u : userList)

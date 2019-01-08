@@ -11,20 +11,19 @@ public class Group {
     public String name;
     public String admin;
     public Map<String, Boolean> members = new HashMap<>();
-    public int type;
-    public boolean visible;
+    public Map<String, Object> places = new HashMap<>();
+    public Map<String, Boolean> invite = new HashMap<>();
     @Exclude
     public boolean member;
     @Exclude
     public String key;
 
     public Group(){}
-    public Group(String admin, String name, int type, boolean visible)
+
+    public Group(String admin, String name)
     {
         this.admin = admin;
         this.name = name;
-        this.type = type;
-        this.visible = visible;
     }
 
     @Exclude
@@ -34,8 +33,7 @@ public class Group {
         map.put("name",name);
         map.put("admin",admin);
         map.put("members",members);
-        map.put("type",type);
-        map.put("visible",visible);
+        map.put("places",places);
         return map;
     }
 }

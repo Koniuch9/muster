@@ -9,14 +9,15 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class User {
 
-    @Exclude
-    public String uid;
     public String name;
     public String photoUrl;
-    @Exclude
-    private boolean isSelected;
     public Map<String,Boolean> groups = new HashMap<>();
     public Map<String,Double> location = new HashMap<>();
+    public Map<String,Boolean> block = new HashMap<>();
+    @Exclude
+    private boolean isSelected;
+    @Exclude
+    public String uid;
 
     public User(){}
 
@@ -40,6 +41,7 @@ public class User {
         map.put("name",name);
         map.put("groups",groups);
         map.put("location",location);
+        map.put("block",block);
         return map;
     }
 

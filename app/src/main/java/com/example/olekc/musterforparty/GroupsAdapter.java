@@ -26,16 +26,18 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
     ImageView acceptIcon;
     ImageView refuseIcon;
     int layout;
+    String currentGroupKey;
     FirebaseAuth mAuth;
     FirebaseUser user;
     DatabaseReference dbRef;
 
-    public GroupsAdapter(Context context, int layout, List<Group> groupList)
+    public GroupsAdapter(Context context, int layout, List<Group> groupList, String currGroup)
     {
         super(context,layout,groupList);
         this.context = context;
         this.groupList = groupList;
         this.layout = layout;
+        currentGroupKey = currGroup;
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference();
@@ -78,6 +80,8 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
             });
         }
         TextView groupName = view.findViewById(R.id.groupName);
+        if(currentGroupKey != null && currentGroupKey.equals(group.key))
+            view.setBackgroundColor(context.getColor(R.color.colorPrimary));
         groupName.setText(group.name);
 
         return view;

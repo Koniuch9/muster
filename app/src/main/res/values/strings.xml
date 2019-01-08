@@ -24,6 +24,7 @@
     <string name="add_place">Dodaj miejsce</string>
     <string name="show_group">Grupy</string>
     <string name="switch_group">Zmień grupę</string>
+    <string name="log_out">Wyloguj się</string>
     <!--
         Add Group Activity
     -->
@@ -40,7 +41,7 @@
     <string name="add_place_name">Nazwa miejsca</string>
     <string name="add_place_placeholder">Wpisz nazwę</string>
     <string name="add_place_current_location">Obecna lokalizacja</string>
-
+    <string name="add_place_note">Notatka</string>
     <!--
         Group Activity
     -->
@@ -73,7 +74,13 @@
     <string name="groups_admin_content">Jesteś administratorem tej grupy</string>
 
     <!--
-        Grops List Item
+        Groups List Item
     -->
     <string name="groups_cancel">Wróć</string>
+    <string name="title_activity_choose_place_location">Map</string>
+
+    <!--
+        Places
+    -->
+
 </resources>

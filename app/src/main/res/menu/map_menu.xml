@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/add_group"
+        android:icon="@drawable/ic_add_group_icon"
         android:title="@string/add_group"/>
     <item android:id="@+id/switch_group"
+        android:icon="@drawable/ic_exit_icon"
         android:title="@string/switch_group"/>
     <item android:id="@+id/add_place"
+        android:icon="@drawable/ic_place_icon"
         android:title="@string/add_place"/>
     <item android:id="@+id/show_group"
+        android:icon="@drawable/ic_group_icon"
         android:title="@string/show_group"/>
 
 </menu>

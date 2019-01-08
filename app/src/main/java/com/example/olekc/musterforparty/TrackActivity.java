@@ -8,7 +8,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -54,12 +57,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.github.yavski.fabspeeddial.FabSpeedDial;
+import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
+
 public class TrackActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener {
 
     private static final int PERMISSION_REQUEST_CODE = 1;
-
+    private static final int ADD_GROUP_RQ = 1000;
+    private static final int ADD_PLACE_RQ = 1001;
+    private static final int GROUPS_RQ = 1002;
     private FirebaseAuth mAuth;
     private FirebaseDatabase db;
     private DatabaseReference dbRef;
@@ -68,11 +76,13 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
     private GoogleMap mMap;
     private List<Group> userGroups;
     private List<User> currentUsers;
+    private List<Place> currentPlaces;
     private List<Marker> currentUsersMarkers;
+    private List<Marker> currentPlaceMarkers;
     private Group currentGroup;
     private String currentGroupKey;
     private SharedPreferences sP;
-
+    private FabSpeedDial fabSpeedDial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,19 +92,49 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
         {
             requestPermission();
         }
+        fabSpeedDial = findViewById(R.id.fab_speed_dial);
         sP = TrackActivity.this.getPreferences(Context.MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference();
         currentUsersMarkers = new ArrayList<>();
+        currentPlaceMarkers = new ArrayList<>();
+        userGroups = new ArrayList<>();
+        setUserGroups();
         currentUsers = new ArrayList<>();
-        setCurrentUsers();
+        currentPlaces = new ArrayList<>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        userGroups = new ArrayList<>();
-        setUserGroups();
+        setCurrentUsers();
+        fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter(){
+            @Override
+            public boolean onMenuItemSelected(MenuItem item)
+            {
+                Intent i;
+                switch(item.getItemId())
+                {
+                    case R.id.add_group:
+                        i = new Intent(TrackActivity.this,AddGroupActivity.class);
+                        startActivityForResult(i,ADD_GROUP_RQ);
+                        return true;
+                    case R.id.add_place:
+                        i = new Intent(TrackActivity.this,AddPlaceActivity.class);
+                        i.putExtra("groupId",currentGroupKey);
+                        startActivity(i);
+                        return true;
+                    case R.id.show_group:
+                        i = new Intent(TrackActivity.this,GroupsActivity.class);
+                        startActivity(i);
+                        return true;
+                    case R.id.switch_group:
+                        showSwitchGroupDialog();
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     /*
@@ -103,7 +143,7 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.map_menu,menu);
+        inflater.inflate(R.menu.options_menu,menu);
         return true;
     }
 
@@ -114,12 +154,15 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
         Intent i;
         switch(item.getItemId())
         {
-            case R.id.add_group:
-                i = new Intent(TrackActivity.this,AddGroupActivity.class);
+            case R.id.log_out:
+                mAuth.signOut();
+                i = new Intent(TrackActivity.this,LoginActivity.class);
                 startActivity(i);
+                finish();
                 return true;
-            case R.id.add_place:
+           /* case R.id.add_place:
                 i = new Intent(TrackActivity.this,AddPlaceActivity.class);
+                i.putExtra("groupId",currentGroupKey);
                 startActivity(i);
                 return true;
             case R.id.show_group:
@@ -127,7 +170,7 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
                 startActivity(i);
                 return true;
             case R.id.switch_group:
-                showSwitchGroupDialog();
+                showSwitchGroupDialog();*/
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -192,16 +235,12 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
         if(!currentUsers.isEmpty() && mMap != null)
         {
             final LatLngBounds.Builder builder = new LatLngBounds.Builder();
-           // double avgLat=0, avgLng=0;
-           // float zoom = 9;
             int i=0;
             for(User u : currentUsers)
             {
                 double lat = u.location.get("lat"),lng = u.location.get("lon");
                 LatLng pos = new LatLng(lat,lng);
                 builder.include(pos);
-               // avgLat += lat;
-               // avgLng += lng;
                 Marker m;
                 if(u.photoUrl != null && !u.photoUrl.equals(""))
                 {
@@ -209,7 +248,7 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
                     Target marker = new PicassoMarker(m);
                     Picasso.get().load(u.photoUrl).into(marker);
                 } else{
-                    m = mMap.addMarker(new MarkerOptions().position(pos).title(u.name));
+                    m = mMap.addMarker(new MarkerOptions().position(pos).title(u.name).icon(bitmapDescriptorFromVector2(this,R.drawable.ic_user_icon)));
                       }
                 currentUsersMarkers.add(m);
                 i++;
@@ -225,12 +264,9 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
                         LatLngBounds bounds = builder.build();
                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,40),3000,null);
                     }
+                    setCurrentPlaces();
                 }
             });
-                /*avgLat /= i;
-                avgLng /= i;*/
-
-
         }
     }
      /*
@@ -289,6 +325,77 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
 
     }
 
+    public void setCurrentPlaces()
+    {
+
+        if(!currentPlaces.isEmpty())
+            currentPlaces.clear();
+        if(currentGroupKey != null && !currentGroupKey.equals(""))
+        {
+            dbRef.child("groups").child(currentGroupKey).child("places").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    for(DataSnapshot ds : dataSnapshot.getChildren())
+                    {
+                        Place p = ds.getValue(Place.class);
+                        currentPlaces.add(p);
+                    }
+                    showCurrentPlaces();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    public void showCurrentPlaces()
+    {
+        if(!currentPlaceMarkers.isEmpty())
+        {
+            for(Marker m : currentPlaceMarkers)
+            {
+                m.remove();
+            }
+            currentPlaceMarkers.clear();
+        }
+        if(mMap != null && currentPlaces != null)
+        for(Place p : currentPlaces)
+        {
+           Marker m = mMap.addMarker(new MarkerOptions()
+                    .icon(bitmapDescriptorFromVector2(this,R.drawable.ic_place_icon))
+                    .position(new LatLng(p.location.get("lat"),p.location.get("lon")))
+                    .title(p.name)
+                    .snippet(p.note)
+                    );
+           currentPlaceMarkers.add(m);
+        }
+    }
+
+    private BitmapDescriptor bitmapDescriptorFromVector2(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+   /* private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes int vectorDrawableResourceId) {
+        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_map_pin_filled_blue_48dp);
+        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
+        vectorDrawable.setBounds(40, 20, vectorDrawable.getIntrinsicWidth() + 40, vectorDrawable.getIntrinsicHeight() + 20);
+        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        background.draw(canvas);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+*/
     public void setUserGroups()
     {
         final Map<String, Boolean> usrGroups = new HashMap<>();
@@ -333,19 +440,31 @@ public class TrackActivity extends AppCompatActivity implements OnMapReadyCallba
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(TrackActivity.this);
         builder.setTitle("Wybierz grupę");
-        builder.setAdapter(new GroupsAdapter(TrackActivity.this, R.layout.groups, userGroups), new DialogInterface.OnClickListener() {
+        builder.setAdapter(new GroupsAdapter(TrackActivity.this, R.layout.groups, userGroups, currentGroupKey), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 SharedPreferences.Editor editor = sP.edit();
                 editor.putString(user.getUid()+"Group",userGroups.get(i).key);
                 editor.commit();
                 setCurrentUsers();
+                setCurrentPlaces();
                 dialogInterface.dismiss();
             }
         });
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode)
+        {
+            case ADD_GROUP_RQ:
+                break;
+
+        }
+    }
+
     /*
    END ------------- L O G I K A -------------
     */

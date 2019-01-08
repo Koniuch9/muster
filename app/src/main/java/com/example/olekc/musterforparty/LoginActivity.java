@@ -54,25 +54,24 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         database = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         dbRef = database.getReference();
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-
+        updateUI(mAuth.getCurrentUser());
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile","email","user_friends"));
-        mAuth = FirebaseAuth.getInstance();
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // App code
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 Toast.makeText(LoginActivity.this, "Pomyślnie zalogowano fb", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCancel() {
-                // App code
                 mAuth.signOut();
                 Toast.makeText(LoginActivity.this, "Authentication cancelled fb",
                         Toast.LENGTH_SHORT).show();
@@ -80,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException exception) {
-                // App code
                 exception.printStackTrace();
                 Toast.makeText(LoginActivity.this, "Authentication failed. fb",
                         Toast.LENGTH_SHORT).show();
@@ -92,18 +90,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        //Log.d(TAG, "handleFacebookAccessToken:" + token);
-
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            //Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(LoginActivity.this, "Pomyślnie zalogowano firebase", Toast.LENGTH_SHORT).show();
                             final FirebaseUser user = mAuth.getCurrentUser();
+
+                            Toast.makeText(LoginActivity.this, "Pomyślnie zalogowano firebase", Toast.LENGTH_SHORT).show();
                             final User usr = new User(user.getDisplayName(),user.getPhotoUrl().toString());
                             dbRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -114,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                                         if(ds.getKey().equals(user.getUid()))x = true;
                                     }
                                     if(!x) dbRef.child("users").child(user.getUid()).setValue(usr);
+                                    updateUI(user);
                                 }
 
                                 @Override
@@ -122,16 +118,12 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
 
-                            //updateUI(user);
+
                         } else {
                             // If sign in fails, display a message to the user.
-                           // Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed. Firebase",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
-
-                        // ...
                     }
                 });
     }
@@ -185,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                                // Log.d(TAG, "signInWithEmail:success");
                                 Toast.makeText(LoginActivity.this, "Pomyślnie zalogowano", Toast.LENGTH_SHORT).show();
                                 FirebaseUser user = mAuth.getCurrentUser();
-                               // updateUI(user);
+                                updateUI(user);
                             } else {
                                 // If sign in fails, display a message to the user.
                                // Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -212,6 +204,17 @@ public class LoginActivity extends AppCompatActivity {
             name = "Random";
         }
         return name;
+    }
+
+    public void updateUI(FirebaseUser u)
+    {
+        if(u != null)
+        {
+            Intent i = new Intent(LoginActivity.this, TrackActivity.class);
+            startActivity(i);
+            finish();
+        }
+
     }
 
     @Override
